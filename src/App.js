@@ -3,7 +3,7 @@ import './App.css';
 // 파이어베이서 파일에서 import 해온 db
 import {db} from './firebase'
 // db 객체
-import { collection, getDocs, addDoc, orderBy, query, updateDoc, doc } from "firebase/firestore";
+import { collection, getDocs, addDoc, orderBy, query, updateDoc, doc, deleteDoc } from "firebase/firestore";
 
 function App() {
   // input으로 받을 새로운 사람의 이름과 나이
@@ -61,12 +61,24 @@ function App() {
   }
 
 
+  const deleteList = async(id) =>{
+    const cfm = window.confirm('Are you sure?')
+    if(cfm){
+      // 내가 삭제하고자 하는 db의 컬렉션의 id를 뒤지면서 데이터를 찾는다
+      const listDoc = doc(db, "todos", id);
+      // deleteDoc을 이용해서 삭제
+      await deleteDoc(listDoc);
+    }
+  }
+
+
 // 띄워줄 데이터 key값에 고유ID 입력
 const showList = todos.map((value)=> (<div key={uniqueId}> 
   <h2>
     {value.content} 
     <span className='date'>{value.d_date}</span>
     <button onClick={()=>{updateList(value.id, value.content, value.d_date)}}>EDIT</button>
+    <button onClick={()=>{deleteList(value.id)}}>Delete</button>
   </h2> 
 </div>))
 
