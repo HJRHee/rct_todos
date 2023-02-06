@@ -3,7 +3,7 @@ import './App.css';
 // 파이어베이서 파일에서 import 해온 db
 import {db} from './firebase'
 // db 객체
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 
 function App() {
   // input으로 받을 새로운 사람의 이름과 나이
@@ -36,10 +36,11 @@ function App() {
   },[])
 
   const date = new Date();
-  const now_date = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate()
+  const now_date = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate()
 
-  const createList = () =>{
-    setNewDate(now_date)
+  const createList = async () =>{
+    // addDoc을 이용해서 내가 원하는 collection에 내가 원하는 key로 값을 추가한다.
+    await addDoc(usersCollectionRef, {content: newList, d_date:now_date});
   }
 
 // 띄워줄 데이터 key값에 고유ID 입력
