@@ -3,7 +3,7 @@ import './App.css';
 // 파이어베이서 파일에서 import 해온 db
 import {db} from './firebase'
 // db 객체
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { collection, getDocs, addDoc, orderBy, query } from "firebase/firestore";
 
 function App() {
   // input으로 받을 새로운 사람의 이름과 나이
@@ -26,7 +26,9 @@ function App() {
   	// 비동기로 데이터 받을준비
     const getList = async () => {
      // getDocs : 컬렉션안에 데이터 가져오기
-      const data = await getDocs(usersCollectionRef);
+      const data = await getDocs(
+        query(usersCollectionRef, orderBy('d_date', 'desc'))
+      );
       // console.log(data);
       // users에 data안의 자료 추가. 객체에 id 덮어씌우는거
       setList(data.docs.map((doc)=>({ ...doc.data(), id: doc.id})))
