@@ -3,14 +3,14 @@ import './App.css';
 // 파이어베이서 파일에서 import 해온 db
 import {db} from './firebase'
 // db 객체
-import { collection, getDocs, addDoc, orderBy, query } from "firebase/firestore";
+import { collection, getDocs, addDoc, orderBy, query, updateDoc, doc } from "firebase/firestore";
 
 function App() {
   // input으로 받을 새로운 사람의 이름과 나이
   const [newList, setNewList] = useState("");
-  const [newDate, setNewDate] = useState("");
+  // const [newDate, setNewDate] = useState("");
 
-  console.log(newList, newDate);
+  // console.log(newList, newDate);
 
  // 데이터 저장 state
   const [todos, setList] = useState([]);
@@ -19,7 +19,7 @@ function App() {
 
   // 고유 key 생성
   const uniqueId = useId();
-  console.log(uniqueId)
+  // console.log(uniqueId)
 
    // 시작될때 한번만 실행되도록 두번째 인자에 빈 배열 추가
   useEffect(()=>{
@@ -45,9 +45,29 @@ function App() {
     await addDoc(usersCollectionRef, {content: newList, d_date:now_date});
   }
 
+  const updateList = async ( id, content, date) =>{
+    // console.log(id+"/"+content+"/"+date)
+
+    const msg = window.prompt('To Do', content)
+      if(msg){
+        // id를 이용하여 업데이트 하고자 하는 데이터 검색
+        const listDoc = doc(db, "todos", id)
+        // 업데이트할 데이터
+        const editField = {content: msg, d_date:date};
+        console.log(editField);
+        // updateDoc()을 이용해서 업데이트
+        await updateDoc(listDoc, editField);    
+      }
+  }
+
+
 // 띄워줄 데이터 key값에 고유ID 입력
 const showList = todos.map((value)=> (<div key={uniqueId}> 
-  <h2>{value.content} <span className='date'>{value.d_date}</span></h2> 
+  <h2>
+    {value.content} 
+    <span className='date'>{value.d_date}</span>
+    <button onClick={()=>{updateList(value.id, value.content, value.d_date)}}>EDIT</button>
+  </h2> 
 </div>))
 
   return (
